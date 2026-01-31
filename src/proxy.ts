@@ -55,10 +55,13 @@ export default async function middleware(req: NextRequest) {
 
   /**
    * Path Logic Definitions.
-   * Public paths: Accessible without login (Landing page, Login, Signup).
+   * Public paths: Accessible without login (Landing, About, Login, Signup).
    * Onboarding paths: Specific setup pages for new users.
    */
-  const isPublicPath = pathname === "/" || pathname.startsWith("/auth");
+  const isPublicPath =
+    pathname === "/" ||
+    pathname === "/about" ||
+    pathname.startsWith("/auth");
   const isOnboardingPath = pathname.startsWith("/preferences") || pathname.startsWith("/setup");
   const isApiPath = pathname.startsWith("/api");
 
