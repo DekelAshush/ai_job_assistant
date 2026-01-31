@@ -60,7 +60,7 @@ export default async function middleware(req: NextRequest) {
    */
   const isPublicPath =
     pathname === "/" ||
-    pathname === "/about" ||
+    pathname.startsWith("/about") ||
     pathname.startsWith("/auth");
   const isOnboardingPath = pathname.startsWith("/preferences") || pathname.startsWith("/setup");
   const isApiPath = pathname.startsWith("/api");
