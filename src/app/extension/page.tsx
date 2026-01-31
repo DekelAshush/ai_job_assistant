@@ -1,8 +1,4 @@
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Job Application Assistant | Extension",
-};
+import React from "react";
 
 export default function ExtensionDemoPage() {
   return (
