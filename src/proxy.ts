@@ -58,10 +58,10 @@ export default async function middleware(req: NextRequest) {
    * Public paths: Accessible without login (Landing, About, Login, Signup).
    * Onboarding paths: Specific setup pages for new users.
    */
-  const isPublicPath =
-    pathname === "/" ||
-    pathname.startsWith("/about") ||
-    pathname.startsWith("/auth");
+  const publicPaths = ["/", "/about", "/auth"];
+  const isPublicPath = publicPaths.some(path =>
+    pathname === path || pathname.startsWith(`${path}/`)
+  );
   const isOnboardingPath = pathname.startsWith("/preferences") || pathname.startsWith("/setup");
   const isApiPath = pathname.startsWith("/api");
 
