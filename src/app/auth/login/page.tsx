@@ -48,9 +48,9 @@ export default function LoginPage() {
     const { data, error } = await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        // הנתיב שאליו המשתמש יחזור אחרי האימות
+        // Dynamically sets the return path based on your current URL
         redirectTo: `${window.location.origin}/auth/callback`,
-        // זה הפרמטר שגורם לגוגל להציג את מסך בחירת החשבונות
+       // Forces Google to show the account selection screen every time
         queryParams: {
           prompt: 'select_account',
           access_type: 'offline',
