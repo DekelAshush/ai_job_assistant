@@ -11,7 +11,9 @@ async function Header() {
   return (
     <header className="border-b border-primary-900 px-8 py-5 sticky top-0 z-50">
       <div className="flex justify-between items-center max-w-7xl mx-auto w-full">
-        <Logo />
+        <div className="-ml-6">
+          <Logo />
+        </div>
         <nav className="flex justify-end items-center">
           {supaUser ? <NavbarUser /> : <NavbarGuest />}
         </nav>

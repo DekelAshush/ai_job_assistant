@@ -6,8 +6,42 @@ export default async function middleware(req: NextRequest) {
   const pathname = nextUrl.pathname;
 
   /**
-   * Initialize the response object. 
-   * We pass the request headers forward to ensure consistency across the request lifecycle.
+   * Normalize pathname: strip trailing slashes so "/about" and "/about/" match the same.
+   * This must run first so public path detection is reliable.
+   */
+  const normalizedPath = pathname.replace(/\/+$/, "") || "/";
+
+  /**
+   * Path Logic Definitions (checked BEFORE any auth call).
+   * Public paths: Accessible without login (Landing, About, Login, Signup).
+   * Onboarding paths: Specific setup pages for new users.
+   */
+  const isPublicPath =
+    normalizedPath === "/" ||
+    normalizedPath === "/about" ||
+    normalizedPath.startsWith("/about/") ||
+    normalizedPath.startsWith("/auth");
+  const isOnboardingPath =
+    normalizedPath.startsWith("/preferences") || normalizedPath.startsWith("/setup");
+  const isApiPath = normalizedPath.startsWith("/api");
+
+  /**
+   * RULE 0: Always-public paths — allow immediately without touching Supabase.
+   * /about and /auth/* are 100% accessible when not logged in (no trailing-slash or auth issues).
+   * "/" is not included here so we can still redirect logged-in users from landing to dashboard.
+   */
+  const isAlwaysPublicPath =
+    normalizedPath === "/about" ||
+    normalizedPath.startsWith("/about/") ||
+    normalizedPath.startsWith("/auth");
+  if (isAlwaysPublicPath) {
+    return NextResponse.next({
+      request: { headers: req.headers },
+    });
+  }
+
+  /**
+   * Initialize the response object for non-public routes.
    */
   let res = NextResponse.next({
     request: {
@@ -49,25 +83,15 @@ export default async function middleware(req: NextRequest) {
 
   /**
    * Check user metadata for onboarding status.
-   * This determines if the user has completed their profile setup.
    */
   const hasCompletedOnboarding = user?.user_metadata?.onboarded === true;
 
-  /**
-   * Path Logic Definitions.
-   * Public paths: Accessible without login (Landing page, Login, Signup).
-   * Onboarding paths: Specific setup pages for new users.
-   */
-  const isPublicPath = pathname === "/" || pathname.startsWith("/auth");
-  const isOnboardingPath = pathname.startsWith("/preferences") || pathname.startsWith("/setup");
-  const isApiPath = pathname.startsWith("/api");
-
-  // --- ACCESS CONTROL & REDIRECT LOGIC ---
+  // --- ACCESS CONTROL & REDIRECT LOGIC (non-public only) ---
 
   /**
    * RULE 1: Authentication Guard.
-   * If the user is NOT logged in and attempts to access any non-public page 
-   * (including routes in the '(dashboard)' group), redirect them to login.
+   * If the user is NOT logged in and attempts to access any non-public page,
+   * redirect them to login. Public paths (e.g. "/" home) are allowed without login.
    */
   if (!isLoggedIn && !isPublicPath) {
     return NextResponse.redirect(new URL("/auth/login", nextUrl));
@@ -87,7 +111,7 @@ export default async function middleware(req: NextRequest) {
    * If a logged-in user hits the home page, send them to their dashboard 
    * or the setup page based on their onboarding status.
    */
-  if (isLoggedIn && pathname === "/") {
+  if (isLoggedIn && normalizedPath === "/") {
     const target = hasCompletedOnboarding ? "/dashboard" : "/preferences";
     return NextResponse.redirect(new URL(target, nextUrl));
   }

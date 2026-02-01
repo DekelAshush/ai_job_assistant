@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { createClient } from "@/_lib/supabaseServer";
 import { UserDropdown } from "./UserDropdown";
-import Logo from "@/_components/main/Logo";
-
 /* Define the navigation items in an array for better maintainability */
 const navLinks = [
   { href: "/dashboard", label: "Dashboard" },
+  { href: "/about", label: "About" },
   { href: "/matches", label: "Matches" },
   { href: "/jobs", label: "Jobs" },
   { href: "/job_tracker", label: "Job Tracker" },
@@ -42,7 +41,6 @@ export async function NavbarUser() {
   return (
     <nav className="z-10 text-lg flex items-center justify-between w-full">
       <div className="flex items-center gap-10">
-        <Logo />
         <ul className="flex gap-10 items-center">
           {navLinks.map((link) => (
             <li key={link.href}>

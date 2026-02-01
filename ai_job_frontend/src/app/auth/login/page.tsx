@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Logo from "@/_components/main/Logo";
 import { supabaseClient } from "@/_lib/supabaseClient";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberDevice, setRememberDevice] = useState(false);
@@ -22,6 +23,9 @@ export default function LoginPage() {
       password,
     });
 
+    // Ensure the session cookie is written before navigating
+    await supabaseClient.auth.getSession();
+
     if (error) {
       setLoading(false);
       alert(error.message || "Login failed");
@@ -36,16 +40,17 @@ export default function LoginPage() {
 
     setLoading(false);
     // Let middleware route based on onboarding status
-    window.location.href = "/";
+    router.push("/");
+    router.refresh();
   }
 
   const handleGoogleLogin = async () => {
     const { data, error } = await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        // הנתיב שאליו המשתמש יחזור אחרי האימות
+        // Dynamically sets the return path based on your current URL
         redirectTo: `${window.location.origin}/auth/callback`,
-        // זה הפרמטר שגורם לגוגל להציג את מסך בחירת החשבונות
+       // Forces Google to show the account selection screen every time
         queryParams: {
           prompt: 'select_account',
           access_type: 'offline',
@@ -157,8 +162,8 @@ export default function LoginPage() {
             Login to your account.
           </h1>
 
-          {/* Login Form */}
-          <form onSubmit={handleCredentialsLogin} className="space-y-5">
+          {/* Login Form - suppressHydrationWarning: browser extensions (e.g. password managers) add data-* attributes after SSR */}
+          <form onSubmit={handleCredentialsLogin} className="space-y-5" suppressHydrationWarning>
             {/* Email Input */}
             <div>
               <label className="block text-sm font-medium text-white mb-2">
@@ -203,6 +208,7 @@ export default function LoginPage() {
                   onClick={() => setShowPassword((p) => !p)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200 focus:outline-none"
                   aria-label={showPassword ? "Hide password" : "Show password"}
+                  suppressHydrationWarning
                 >
                   {showPassword ? (
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -253,6 +259,7 @@ export default function LoginPage() {
               type="submit"
               disabled={loading}
               className="w-full rounded-lg bg-[#00D9FF] px-4 py-3 text-white font-semibold hover:bg-[#00C8E6] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              suppressHydrationWarning
             >
               {loading ? "Signing in..." : "Sign in"}
             </button>
@@ -310,6 +317,7 @@ export default function LoginPage() {
               type="button"
               onClick={handleLinkedInLogin}
               className="group w-full flex items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm transition-all duration-200 hover:shadow-md hover:border-gray-400 active:scale-[0.98]"
+              suppressHydrationWarning
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24" fill="#0077B5">
                 <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />

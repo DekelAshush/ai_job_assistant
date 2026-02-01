@@ -1,0 +1,11 @@
+fastapi==0.115.6
+uvicorn[standard]==0.32.0
+python-dotenv==1.0.1
+openai==1.55.3
+azure-ai-inference==1.0.0b4
+playwright==1.49.0
+beautifulsoup4==4.12.3
+SQLAlchemy==2.0.29
+psycopg2-binary==2.9.9
+passlib[bcrypt]==1.7.4
+python-jose==3.3.0
