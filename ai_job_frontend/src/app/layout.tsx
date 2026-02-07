@@ -15,7 +15,7 @@ export const metadata = {
   description: `
     The AI-powered Job Assistant is a modern SaaS platform designed to streamline
     the job search and application process for technology professionals.
-    Built with Next.js 16 and a Python-based backend, the application leverages
+    Built with Next.js 16, the application leverages
     advanced AI to bridge the gap between candidate profiles and complex job descriptions.
   `.trim(),
 };

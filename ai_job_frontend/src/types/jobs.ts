@@ -10,8 +10,14 @@ export type JobListing = {
   source_url?: string | null;
   description?: string | null;
   salary_range?: string | null;
-  ai_analysis?: any;
-  match_score?: number | null;
+  ai_analysis?: { 
+    match_score?: number | null; 
+    fit_reason?: string | null;
+    summary?: string;
+    missing_skills?: string[];
+    [k: string]: unknown 
+  } | null;
+  /** Derived from ai_analysis.match_score for display; not a DB column */
   status?: string | null;
   applied_at?: string | null;
   created_at?: string | null;

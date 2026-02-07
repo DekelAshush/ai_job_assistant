@@ -12,6 +12,7 @@ export default function JobCard({ job, active, onSelect }: Props) {
   return (
     <button
       onClick={() => onSelect(job.id)}
+      suppressHydrationWarning
       className={`w-full rounded-2xl border px-4 py-3 text-left transition ${
         active
           ? "border-sky-500 bg-slate-800/70 shadow-lg shadow-sky-900/20"

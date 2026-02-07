@@ -5,4 +5,5 @@ export type Job = {
   title: string;
   company: string;
   status: Status;
+  source_url?: string | null;
 };

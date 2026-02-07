@@ -9,9 +9,9 @@ async function Header() {
   const supaUser = data.user;
 
   return (
-    <header className="border-b border-primary-900 px-8 py-5 sticky top-0 z-50">
-      <div className="flex justify-between items-center max-w-7xl mx-auto w-full">
-        <div className="-ml-6">
+    <header className="sticky top-0 z-40 backdrop-blur border-b border-slate-800 bg-slate-900/85 shadow-lg shadow-slate-900/40 text-slate-100">
+      <div className="w-full px-10 md:px-20 lg:px-28 xl:px-36 py-6 flex justify-between items-center">
+        <div className="-ml-30">
           <Logo />
         </div>
         <nav className="flex justify-end items-center">

@@ -17,19 +17,19 @@ Production-ready starter for a Simplify Copilot–inspired web app. Clean separa
 - Wire API calls through `services/apiClient` to keep fetch logic centralized.
 
 ## Backend (FastAPI / PostgreSQL / SQLAlchemy 2.0)
-- `api/main.py`: FastAPI app, CORS, router registration.
+- `main.py`: FastAPI app, CORS, router registration (single entrypoint).
 - `api/routes`: HTTP surface (`auth`, `jobs`, `health`). Keep routes thin.
 - `api/dependencies`: Shared FastAPI dependencies (DB session, auth guards).
 - `api/database`: Engine + session factory; env-driven Postgres URL.
 - `api/models`: ORM models (`User`, `Job`) on shared `Base`.
 - `api/schemas`: Pydantic request/response contracts.
 - `api/services`: Business/AI layer placeholder—keep heavy logic out of routes.
-- `main.py` (repo root): Entrypoint alias for `uvicorn`.
+- Run backend with `python main.py` or `uvicorn main:app --reload`.
 
 ### Notes
 - JWT-ready auth scaffold using `python-jose` and `passlib[bcrypt]`.
 - Clear lane for AI logic via `api/services` so routes stay composable/testable.
-- `render.yaml` configured to serve `api.main:app` on Render.
+- `render.yaml` configured to serve `main:app` on Render.
 
 ## Environment
 - Frontend: `NEXT_PUBLIC_API_URL` points to FastAPI base URL.
@@ -40,7 +40,8 @@ Production-ready starter for a Simplify Copilot–inspired web app. Clean separa
 # Backend
 cd ai_job_backend
 pip install -r requirements.txt
-uvicorn api.main:app --reload
+python main.py
+# or: uvicorn main:app --reload
 
 # Frontend
 cd ai_job_frontend

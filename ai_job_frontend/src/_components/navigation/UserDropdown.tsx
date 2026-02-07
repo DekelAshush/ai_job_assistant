@@ -86,12 +86,13 @@ export function UserDropdown({ user }: UserDropdownProps) {
   };
 
   return (
-    <div className="relative" ref={dropdownRef}>
-      {/* User Avatar Button */}
+    <div className="relative" ref={dropdownRef} suppressHydrationWarning>
+      {/* User Avatar Button - suppressHydrationWarning: extensions may add fdprocessedid */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg p-1"
         aria-label="User menu"
+        suppressHydrationWarning
       >
         {user?.image? (
           <Image
@@ -163,6 +164,7 @@ export function UserDropdown({ user }: UserDropdownProps) {
           <button
             onClick={handleSignOut}
             className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors text-left"
+            suppressHydrationWarning
           >
             <svg
               className="w-5 h-5 text-gray-500"

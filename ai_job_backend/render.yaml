@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: ai-job-assistant-backend
+    runtime: python
+    rootDir: ai_job_backend
+    buildCommand: |
+      pip install -r requirements.txt
+      playwright install chromium --with-deps
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.10.0"
+      - key: AZURE_DEEPSEEK_API_KEY
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: FRONTEND_URL
+        sync: false

@@ -8,7 +8,7 @@ __pycache__/
 
 # Environments
 .env
-.venv
+.venv/
 venv/
 
 # Packaging / logs

@@ -27,13 +27,14 @@ export default async function middleware(req: NextRequest) {
 
   /**
    * RULE 0: Always-public paths — allow immediately without touching Supabase.
-   * /about and /auth/* are 100% accessible when not logged in (no trailing-slash or auth issues).
-   * "/" is not included here so we can still redirect logged-in users from landing to dashboard.
+   * /about and /auth/callback are allowed without auth check.
+   * /auth/login and /auth/register are NOT included so we can redirect logged-in users away.
    */
   const isAlwaysPublicPath =
     normalizedPath === "/about" ||
     normalizedPath.startsWith("/about/") ||
-    normalizedPath.startsWith("/auth");
+    normalizedPath === "/auth/callback" ||
+    normalizedPath.startsWith("/auth/callback/");
   if (isAlwaysPublicPath) {
     return NextResponse.next({
       request: { headers: req.headers },
@@ -91,10 +92,21 @@ export default async function middleware(req: NextRequest) {
   /**
    * RULE 1: Authentication Guard.
    * If the user is NOT logged in and attempts to access any non-public page,
-   * redirect them to login. Public paths (e.g. "/" home) are allowed without login.
+   * redirect them to login. Public paths (e.g. "/" home, /auth/login, /auth/register) are allowed without login.
    */
   if (!isLoggedIn && !isPublicPath) {
     return NextResponse.redirect(new URL("/auth/login", nextUrl));
+  }
+
+  /**
+   * RULE 1b: Logged-in users must not access login or register pages.
+   * Redirect them to dashboard (or preferences if onboarding not done).
+   */
+  const isAuthLoginOrRegister =
+    normalizedPath === "/auth/login" || normalizedPath === "/auth/register";
+  if (isLoggedIn && isAuthLoginOrRegister) {
+    const target = hasCompletedOnboarding ? "/dashboard" : "/preferences";
+    return NextResponse.redirect(new URL(target, nextUrl));
   }
 
   /**

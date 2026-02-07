@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabaseClient } from "@/_lib/supabaseClient";
+import { postExtractResumeText } from "@/_lib/backendApi";
 import { PersonalInfo } from "@/types/profile";
 
 type Props = {
@@ -93,15 +94,30 @@ export default function Documents({ userId, value, onChange }: Props) {
         { onConflict: "user_id" }
       );
 
-    isResume ? setUploadingResume(false) : setUploadingCover(false);
-
     if (upsertError) {
+      isResume ? setUploadingResume(false) : setUploadingCover(false);
       alert(`Database update failed: ${upsertError.message}`);
       return;
     }
 
     onChange({ ...value, [field]: storedPath });
-    alert("Document uploaded and profile updated!");
+
+    if (isResume) {
+      try {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session?.access_token) {
+          await postExtractResumeText(session.access_token);
+        }
+      } catch (e) {
+        console.warn("Resume text extraction failed:", e);
+        alert("Document uploaded, but extracting text failed. You can try again later.");
+        isResume ? setUploadingResume(false) : setUploadingCover(false);
+        return;
+      }
+    }
+
+    isResume ? setUploadingResume(false) : setUploadingCover(false);
+    alert(isResume ? "Resume uploaded and text extracted. You can use \"Get relevant jobs\" now." : "Document uploaded and profile updated!");
   };
 
   const deleteDocument = async (field: "resume_url" | "cover_letter_url") => {
@@ -126,12 +142,16 @@ export default function Documents({ userId, value, onChange }: Props) {
 
     await supabaseClient.storage.from(bucketName).remove([path]);
 
+    const payload: Record<string, unknown> = {
+      user_id: currentUid,
+      [field]: null,
+      updated_at: new Date().toISOString(),
+    };
+    if (isResume) payload.resume_text = null;
+
     const { error: upsertError } = await supabaseClient
       .from("user_personal_info")
-      .upsert(
-        { user_id: currentUid, [field]: null, updated_at: new Date().toISOString() },
-        { onConflict: "user_id" }
-      );
+      .upsert(payload, { onConflict: "user_id" });
 
     isResume ? setDeletingResume(false) : setDeletingCover(false);
 
@@ -140,7 +160,11 @@ export default function Documents({ userId, value, onChange }: Props) {
       return;
     }
 
-    onChange({ ...value, [field]: null });
+    onChange({
+      ...value,
+      [field]: null,
+      ...(isResume ? { resume_text: null } : {}),
+    });
     if (isResume) setResumeLink(null);
     else setCoverLink(null);
   };
