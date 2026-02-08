@@ -1,12 +1,11 @@
 services:
   - type: web
     name: ai-job-assistant-backend
-    runtime: python
+    runtime: docker
     rootDir: ai_job_backend
-    buildCommand: |
-      pip install -r requirements.txt
-      playwright install chromium
-    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    dockerfilePath: ai_job_backend/Dockerfile
+    dockerContext: ai_job_backend
+    dockerCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: "3.10.0"
