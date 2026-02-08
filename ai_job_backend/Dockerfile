@@ -1,6 +1,6 @@
 # Official Playwright image includes Chromium + system deps (no root needed at build).
-# Match this tag to the playwright version in requirements.txt.
-FROM mcr.microsoft.com/playwright/python:v1.49.0-noble
+# Tag must match playwright version in requirements.txt.
+FROM mcr.microsoft.com/playwright/python:v1.57.0-noble
 
 WORKDIR /app
 
