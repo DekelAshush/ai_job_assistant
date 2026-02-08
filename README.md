@@ -16,7 +16,7 @@ Production-ready starter for a Simplify Copilot–inspired web app. Clean separa
 - Sidebar-first layout mirrors simplify.jobs/copilot UX philosophy.
 - Wire API calls through `services/apiClient` to keep fetch logic centralized.
 
-## Backend (FastAPI / PostgreSQL / SQLAlchemy 2.0)
+## Backend (FastAPI / PostgreSQL)
 - `main.py`: FastAPI app, CORS, router registration (single entrypoint).
 - `api/routes`: HTTP surface (`auth`, `jobs`, `health`). Keep routes thin.
 - `api/dependencies`: Shared FastAPI dependencies (DB session, auth guards).
