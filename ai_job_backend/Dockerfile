@@ -6,7 +6,8 @@ WORKDIR /app
 
 # Install Python deps (playwright package is installed here; browsers come from base image).
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
 
 # App code
 COPY . .
