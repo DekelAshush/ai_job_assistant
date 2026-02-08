@@ -19,8 +19,8 @@ def run_multi_source_scrape(
     location_query: str,
     *,
     headless: bool = True,
-    min_jobs: int = 10,
-    max_jobs: int = 10,
+    min_jobs: int = 15,
+    max_jobs: int = 15,
 ) -> list[dict[str, Any]]:
     """
     Scrape job listings from multiple sources. Tries Indeed first; if result has fewer than

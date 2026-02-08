@@ -48,7 +48,7 @@ def _run_scrape_my_jobs(user_id: str) -> None:
         location_query = (locations[0] if locations else "remote").replace(" ", "+")
 
         raw = run_multi_source_scrape(
-            role_query, location_query, headless=True, min_jobs=10, max_jobs=10
+            role_query, location_query, headless=True, min_jobs=15, max_jobs=15
         )
         if not raw:
             _scrape_status[user_id] = {
